@@ -11,6 +11,7 @@ require (
 require (
 	github.com/swaggo/files v1.0.0 // indirect
 	github.com/swaggo/gin-swagger v1.5.3 // indirect
+	gopkg.in/validator.v2 v2.0.1 // indirect
 )
 
 require (
