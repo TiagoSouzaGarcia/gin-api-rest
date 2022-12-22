@@ -1,0 +1,29 @@
+definitions:
+  httputil.HTTPError:
+    properties:
+      code:
+        example: 400
+        type: integer
+      message:
+        example: status bad request
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /alunos:
+    get:
+      consumes:
+      - application/json
+      description: Rota para exibir todos os alunos do banco
+      produces:
+      - application/json
+      responses:
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: Exibir todos os alunos
+      tags:
+      - alunos
+swagger: "2.0"
