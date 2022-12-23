@@ -125,13 +125,17 @@ func TestEditaUmALunoHandler(t *testing.T) {
 	r := SetupDasRotasDeTeste()
 	//Patch edita todos os campos
 	r.PATCH("/alunos/:id", controllers.EditarAluno)
+	//Objeto que será passado no método.
 	aluno := models.Aluno{Nome: "Nome do Aluno Teste", CPF: "47123456789", RG: "123456700"}
+	//Marshal converte o vaor para json
 	valorJson, _ := json.Marshal(aluno)
 	pathParaEditar := "/alunos/" + strconv.Itoa(ID)
+	//Dessa vez será passada algo para o corpo da requisição. A json será passada para bytes.
 	req, _ := http.NewRequest("PATCH", pathParaEditar, bytes.NewBuffer(valorJson))
 	resposta := httptest.NewRecorder()
 	r.ServeHTTP(resposta, req)
 	var alunoMockAtualizado models.Aluno
+	//Unmarshal vai transformar os valores em bytes da resposta para um Json e armazenar no endereco de memória determinado.
 	json.Unmarshal(resposta.Body.Bytes(), &alunoMockAtualizado)
 	assert.Equal(t, "47123456789", alunoMockAtualizado.CPF)
 	assert.Equal(t, "Nome do Aluno Teste", alunoMockAtualizado.Nome)

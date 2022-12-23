@@ -10,6 +10,8 @@ import (
 
 func HandleRequests() {
 	r := gin.Default()
+	r.LoadHTMLGlob("templates/*")
+	r.Static("/assets", "./assets")
 	docs.SwaggerInfo.BasePath = "/"
 	r.GET("/alunos", controllers.ExibirTodosAlunos)
 	r.GET("/:nome", controllers.Saudacao)
@@ -19,5 +21,9 @@ func HandleRequests() {
 	r.PATCH("/alunos/:id", controllers.EditarAluno)
 	r.GET("/alunos/cpf/:cpf", controllers.BuscarAlunoPorCpf)
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
+	r.GET("/index", controllers.ExibePaginaIndex)
+
+	r.NoRoute(controllers.RotaNaoEncontrada)
+
 	r.Run()
 }
