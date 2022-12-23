@@ -8,13 +8,30 @@ import (
 	"testing"
 
 	"github.com/TiagoSouzaGarcia/api-go-gin/controllers"
+	"github.com/TiagoSouzaGarcia/api-go-gin/database"
+	"github.com/TiagoSouzaGarcia/api-go-gin/models"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 )
 
+var ID int
+
 func SetupDasRotasDeTeste() *gin.Engine {
+	//Enxugando as msgs.
+	gin.SetMode(gin.ReleaseMode)
 	rotas := gin.Default()
 	return rotas
+}
+
+func CriaAlunoMock() {
+	aluno := models.Aluno{Nome: "Nome do Aluno Teste", CPF: "12345678901", RG: "123456789"}
+	database.DB.Create(&aluno)
+	ID = int(aluno.ID)
+}
+
+func DeletaAlunoMock() {
+	var aluno models.Aluno
+	database.DB.Delete(&aluno, ID)
 }
 
 func TestVerificaStatusCodeDaSaudacaoComParametro(t *testing.T) {
@@ -38,6 +55,31 @@ func TestVerificaStatusCodeDaSaudacaoComParametro(t *testing.T) {
 	mockDaResposta := `{"API diz:":"E ai Tiago, tudo beleza?"}`
 	respostaBody, _ := ioutil.ReadAll(resposta.Body)
 	assert.Equal(t, mockDaResposta, string(respostaBody))
-	fmt.Println(string(respostaBody))
-	fmt.Println(mockDaResposta)
+	//impressão dos conteudos dos testes
+	/* fmt.Println(string(respostaBody))
+	fmt.Println(mockDaResposta) */
+}
+
+func TestListandoTodosOsAlunosHandler(t *testing.T) {
+	database.ConectaComBancoDeDados()
+	r := SetupDasRotasDeTeste()
+	r.GET("/alunos", controllers.ExibirTodosAlunos)
+	req, _ := http.NewRequest("GET", "/alunos", nil)
+	resposta := httptest.NewRecorder()
+	r.ServeHTTP(resposta, req)
+	assert.Equal(t, http.StatusOK, resposta.Code)
+	//Impressão dos alunos
+	fmt.Println(resposta.Body)
+}
+
+func TestBuscandoPorCPF(t *testing.T) {
+	database.ConectaComBancoDeDados()
+	CriaAlunoMock()
+	defer DeletaAlunoMock()
+	r := SetupDasRotasDeTeste()
+	r.GET("alunos/cpf/:cpf", controllers.BuscarAlunoPorCpf)
+	req, _ := http.NewRequest("GET", "/alunos/cpf/12345678901", nil)
+	resposta := httptest.NewRecorder()
+	r.ServeHTTP(resposta, req)
+	assert.Equal(t, http.StatusOK, resposta.Code)
 }
