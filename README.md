@@ -13,4 +13,4 @@ Caso seja solicitado um caminho que não existe a API vai devolver uma página d
 
 :D
 
-versão do documento 0.1. Vai melhorar no futuro.
+Versão do documento 0.1. Vai melhorar no futuro.
